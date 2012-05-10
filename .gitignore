@@ -1,4 +1,5 @@
 *.o
+*.a
 *.out
 Cmake*
 .DS_Store
