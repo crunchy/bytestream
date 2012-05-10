@@ -1,19 +1,19 @@
 What
-----
+====
 
 A simple bytestream lib for interaction between our screenshare capture component and x264 encoder/rtmp streamer for licensing purposes.
 
 API
----
+===
 
 Packet
-======
+-------
 
 Each packets consists of a header (struct), a body (tpl_bin) and a body size (int).
 The body is a tpl binary stream structure, which gets cast back into whatever form it originally took (usually mouse data or frame data).
 
 Header
-======
+------
 
 A header consists of an event type and a timestamp. The timestamp is simply the time the packet/header is created (using time()).
 
@@ -24,7 +24,7 @@ There are four types of events:
 Start/Stop take no params, they simply create a packet with a header
 
 Data Types
-==========
+----------
 
 * `sc_mouse_coords` : contains a pair of uint16_t, x and y.
 
@@ -39,7 +39,7 @@ all members are uint16_t.
 
 
 Functions
----------
+--------
 
 The following methods handle writing and reading the packets across a given file descriptor (fd). This could be a socket, a file handle, or other i/o stream. Each method takes the fd as its first parameter. `start/stop` do not take any other parameters. The mouse data writer takes an `sc_mouse_coords` struct and the frame writer takes an `sc_frame`. Each "put" method also returns the packet it created.
 
@@ -70,7 +70,7 @@ sc_bytestream_packet deserialize_packet(int fd);
 ```
 
 Testing
--------
+=======
 
 First compile the tpl.c file with gcc
 
@@ -81,6 +81,6 @@ then you can simply run `make` to compile the test and run the tests using the s
 ./bytesream_spec
 
 Dependencies
-----
+========
 
 This library is tested via googletest (http://code.google.com/p/googletest/) and depends on the tpl serialization library (http://tpl.sourceforge.net/userguide.html).
