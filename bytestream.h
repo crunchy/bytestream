@@ -57,10 +57,11 @@ sc_bytestream_packet sc_bytestream_put_stop(int fd);
 sc_bytestream_packet sc_bytestream_put_mouse_data(int fd, sc_mouse_coords coords);
 sc_bytestream_packet sc_bytestream_put_frame(int fd, sc_frame frame);
 
-void sc_bytestream_get_event();
-void sc_bytestream_get_event_header();
 sc_mouse_coords sc_bytestream_get_mouse_data(int fd);
 sc_frame sc_bytestream_get_frame(int fd);
+
+sc_bytestream_packet sc_bytestream_get_event(int fd);
+sc_bytestream_header sc_bytestream_get_event_header(int fd);
 
 sc_bytestream_header create_header(uint8_t event);
 void serialize_packet(int fd, sc_bytestream_packet packet);

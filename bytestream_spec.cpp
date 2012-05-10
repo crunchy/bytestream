@@ -77,3 +77,21 @@ TEST_F(BytestreamTest, EncodeFrameData) {
   EXPECT_EQ(frameSize, decode_frame.size);
 };
 
+TEST_F(BytestreamTest, GetHeader) {
+  sc_bytestream_packet packet = sc_bytestream_put_stop(tmp);
+
+  lseek(tmp, 0, 0); // rewind tempfile
+  sc_bytestream_header header = sc_bytestream_get_event_header(tmp);
+
+  EXPECT_EQ(packet.header.type, header.type);
+}
+
+TEST_F(BytestreamTest, GetRawPacket) {
+  sc_bytestream_packet packet = sc_bytestream_put_start(tmp);
+
+  lseek(tmp, 0, 0); // rewind tempfile
+  sc_bytestream_packet decode_packet = sc_bytestream_get_event(tmp);
+
+  EXPECT_EQ(packet.body.sz, decode_packet.body.sz);
+  EXPECT_EQ(packet.header.type, decode_packet.header.type);
+}

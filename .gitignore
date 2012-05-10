@@ -5,3 +5,4 @@ Cmake*
 *.tpl
 
 tmp.c
+bytestream_spec

@@ -68,6 +68,11 @@ sc_bytestream_packet sc_bytestream_get_event(int fd) {
   return packet;
 }
 
+sc_bytestream_header sc_bytestream_get_event_header(int fd) {
+  sc_bytestream_packet packet = sc_bytestream_get_event(fd);
+  return packet.header;
+}
+
 // ENCODING/DECODING HELPERS
 
 sc_bytestream_header create_header(uint8_t type) {
