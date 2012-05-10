@@ -1,0 +1,1 @@
+nonempty.lo nonempty.o: nonempty.c

@@ -1,0 +1,7 @@
+*.o
+*.out
+Cmake*
+.DS_Store
+*.tpl
+
+tmp.c
