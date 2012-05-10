@@ -25,29 +25,12 @@ TEST_F(BytestreamTest, CreateHeader) {
   EXPECT_EQ(timeNow, h.timestamp);
 };
 
-TEST_F(BytestreamTest, PackingHelpers) {
-  char buffer[35], *enc = buffer, *end = buffer + sizeof(buffer);
-  uint16_t one, two, three;
-
-  enc = append_uint16(enc, end, 42);
-  enc = append_uint16(enc, end, 57);
-  append_uint16(enc, end, 29);
-
-  one = decode_uint16(enc - 4);
-  two = decode_uint16(enc - 2);
-  three = decode_uint16(enc);
-
-  EXPECT_EQ(42, one);
-  EXPECT_EQ(57, two);
-  EXPECT_EQ(29, three);
-};
-
 // start and stop both have null bodys
 TEST_F(BytestreamTest, EncodeStart) {
   sc_bytestream_packet packet = sc_bytestream_put_start(tmp);
 
   EXPECT_EQ(START, packet.header.type);
-  EXPECT_EQ(NULL, packet.body);
+  EXPECT_EQ(NULL, packet.body.addr);
 
   lseek(tmp, 0, 0); // rewind tempfile
   sc_bytestream_packet packet_read = deserialize_packet(tmp);

@@ -7,6 +7,7 @@
 // Protocol definition
 
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -23,7 +24,7 @@
 #define MAX_BODY_SIZE 128
 
 typedef uint32_t sc_time;
-static char TPL_STRUCTURE[] = "S($(vu)su)";
+static char TPL_STRUCTURE[] = "S(vu)B";
 
 typedef struct {
     uint16_t x, y;
@@ -43,8 +44,7 @@ typedef struct {
 
 typedef struct {
   sc_bytestream_header header;
-  char *body;
-  uint32_t body_size;
+  tpl_bin body;
 } sc_bytestream_packet;
 
 sc_bytestream_packet sc_bytestream_put_start(int fd);
@@ -56,10 +56,6 @@ void sc_bytestream_get_event();
 void sc_bytestream_get_event_header();
 sc_mouse_coords sc_bytestream_get_mouse_data(int fd);
 void sc_bytestream_get_frame();
-
-
-char *append_uint16(char *output, char *end, uint16_t value);
-uint16_t decode_uint16(const char *data);
 
 sc_bytestream_header create_header(uint8_t event);
 void serialize_packet(int fd, sc_bytestream_packet packet);
