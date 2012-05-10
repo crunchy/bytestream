@@ -43,6 +43,11 @@ typedef struct {
 } sc_bytestream_header;
 
 typedef struct {
+  uint8_t *framePtr;
+  int size;
+} sc_frame;
+
+typedef struct {
   sc_bytestream_header header;
   tpl_bin body;
 } sc_bytestream_packet;
@@ -50,12 +55,12 @@ typedef struct {
 sc_bytestream_packet sc_bytestream_put_start(int fd);
 sc_bytestream_packet sc_bytestream_put_stop(int fd);
 sc_bytestream_packet sc_bytestream_put_mouse_data(int fd, sc_mouse_coords coords);
-sc_bytestream_packet sc_bytestream_put_frame(int fd, char *data);
+sc_bytestream_packet sc_bytestream_put_frame(int fd, sc_frame frame);
 
 void sc_bytestream_get_event();
 void sc_bytestream_get_event_header();
 sc_mouse_coords sc_bytestream_get_mouse_data(int fd);
-void sc_bytestream_get_frame();
+sc_frame sc_bytestream_get_frame(int fd);
 
 sc_bytestream_header create_header(uint8_t event);
 void serialize_packet(int fd, sc_bytestream_packet packet);

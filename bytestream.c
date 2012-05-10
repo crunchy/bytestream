@@ -46,8 +46,26 @@ sc_mouse_coords sc_bytestream_get_mouse_data(int fd) {
   return coords;
 }
 
-void sc_bytestream_get_event(int fd) {
+sc_bytestream_packet sc_bytestream_put_frame(int fd, sc_frame frame) {
+  sc_bytestream_packet packet = {create_header(VIDEO), create_body(&frame, sizeof(frame))};
+  serialize_packet(fd, packet);
+
+  return packet;
+}
+
+sc_frame sc_bytestream_get_frame(int fd) {
   sc_bytestream_packet packet = deserialize_packet(fd);
+  void *data = packet.body.addr;
+
+  sc_frame frame = *((sc_frame *) data);
+  free(data);
+
+  return frame;
+}
+
+sc_bytestream_packet sc_bytestream_get_event(int fd) {
+  sc_bytestream_packet packet = deserialize_packet(fd);
+  return packet;
 }
 
 // ENCODING/DECODING HELPERS

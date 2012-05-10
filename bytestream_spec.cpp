@@ -59,3 +59,21 @@ TEST_F(BytestreamTest, EncodeMouseData) {
   EXPECT_EQ(coords.y, decode_coords.y);
 };
 
+TEST_F(BytestreamTest, EncodeFrameData) {
+  int frameData = 0x499602D2;
+  uint8_t *framePtr = (uint8_t *) &frameData;
+  int frameSize = sizeof(frameData);
+
+  sc_frame frame = {framePtr, frameSize};
+
+  sc_bytestream_packet packet = sc_bytestream_put_frame(tmp, frame);
+
+  lseek(tmp, 0, 0); // rewind tempfile
+  sc_frame decode_frame = sc_bytestream_get_frame(tmp);
+  int reconstruct;
+  memcpy(&reconstruct, decode_frame.framePtr, decode_frame.size);
+
+  EXPECT_EQ(frameData, reconstruct);
+  EXPECT_EQ(frameSize, decode_frame.size);
+};
+
