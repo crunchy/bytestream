@@ -43,12 +43,8 @@ sc_bytestream_packet sc_bytestream_put_mouse_data(int fd, sc_mouse_coords coords
 
 sc_mouse_coords sc_bytestream_get_mouse_data(int fd) {
   sc_bytestream_packet packet = deserialize_packet(fd);
-  void *data = packet.body.addr;
 
-  sc_mouse_coords coords = *((sc_mouse_coords *) data);
-  free(data);
-
-  return coords;
+  return parse_mouse_coords(packet);
 }
 
 sc_bytestream_packet sc_bytestream_put_frame(int fd, sc_frame frame) {
@@ -60,12 +56,8 @@ sc_bytestream_packet sc_bytestream_put_frame(int fd, sc_frame frame) {
 
 sc_frame sc_bytestream_get_frame(int fd) {
   sc_bytestream_packet packet = deserialize_packet(fd);
-  void *data = packet.body.addr;
 
-  sc_frame frame = *((sc_frame *) data);
-  free(data);
-
-  return frame;
+  return parse_frame(packet);
 }
 
 sc_bytestream_packet sc_bytestream_get_event(int fd) {
@@ -79,6 +71,24 @@ sc_bytestream_header sc_bytestream_get_event_header(int fd) {
 }
 
 // ENCODING/DECODING HELPERS
+
+sc_mouse_coords parse_mouse_coords(sc_bytestream_packet packet) {
+  void *data = packet.body.addr;
+
+  sc_mouse_coords coords = *((sc_mouse_coords *) data);
+  free(data);
+
+  return coords;
+}
+
+sc_frame parse_frame(sc_bytestream_packet packet) {
+  void *data = packet.body.addr;
+
+  sc_frame frame = *((sc_frame *) data);
+  free(data);
+
+  return frame;
+}
 
 void serialize_packet(int fd, sc_bytestream_packet packet) {
   tpl_node *tn = tpl_map(TPL_STRUCTURE, &packet.header, &packet.body);
