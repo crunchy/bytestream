@@ -20,8 +20,7 @@
 #define START 0x02
 #define MOUSE 0x03
 #define VIDEO 0x04
-
-#define MAX_BODY_SIZE 128
+#define NO_DATA 0xFF
 
 typedef uint32_t sc_time;
 static char TPL_STRUCTURE[] = "S(vu)B";

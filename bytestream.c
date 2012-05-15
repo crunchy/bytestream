@@ -6,6 +6,11 @@
 #include <time.h>
 #include "bytestream.h"
 
+sc_bytestream_header create_header(uint8_t type) {
+  sc_bytestream_header header = {(uint16_t)type, time(NULL)};
+  return header;
+}
+
 tpl_bin create_body(void *addr, int sz) {
   tpl_bin body;
 
@@ -75,11 +80,6 @@ sc_bytestream_header sc_bytestream_get_event_header(int fd) {
 
 // ENCODING/DECODING HELPERS
 
-sc_bytestream_header create_header(uint8_t type) {
-  sc_bytestream_header header = {(uint16_t)type, time(NULL)};
-  return header;
-}
-
 void serialize_packet(int fd, sc_bytestream_packet packet) {
   tpl_node *tn = tpl_map(TPL_STRUCTURE, &packet.header, &packet.body);
   tpl_pack(tn, 0);
@@ -88,15 +88,23 @@ void serialize_packet(int fd, sc_bytestream_packet packet) {
 }
 
 sc_bytestream_packet deserialize_packet(int fd) {
+  sc_bytestream_packet packet;
   sc_bytestream_header header;
   tpl_bin data;
 
   tpl_node *tn = tpl_map(TPL_STRUCTURE, &header, &data);
-  tpl_load(tn, TPL_FD, fd);
-  tpl_unpack(tn, 0);
-  tpl_free(tn);
+  int loaded = tpl_load(tn, TPL_FD, fd);
 
-  sc_bytestream_packet packet = {header, data};
+  if( loaded == -1 ) {
+    packet.header = create_header(NO_DATA);
+    packet.body = create_body(NULL, 0);
+  } else {
+    tpl_unpack(tn, 0);
+    packet.header = header;
+    packet.body = data;
+  }
+
+  tpl_free(tn);
 
   return packet;
 }
