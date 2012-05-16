@@ -6,14 +6,14 @@
 class BytestreamTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
-    tmp = fopen("test.tpl", "w+");
+    tmp = open("test.tpl", O_RDWR | O_CREAT | O_TRUNC, 0666);
   }
 
   virtual void TearDown() {
-    fclose(tmp);
+    close(tmp);
   }
 
-  FILE *tmp;
+  int tmp;
 };
 
 // simple header creation helper
@@ -32,7 +32,7 @@ TEST_F(BytestreamTest, EncodeStart) {
   EXPECT_EQ(START, packet.header.type);
   EXPECT_EQ(NULL, packet.body.addr);
 
-  fseek(tmp, 0, 0); // rewind tempfile
+  lseek(tmp, 0, 0); // rewind tempfile
   sc_bytestream_packet packet_read = deserialize_packet(tmp);
 
   EXPECT_EQ(packet.header.type, packet_read.header.type);
@@ -41,7 +41,7 @@ TEST_F(BytestreamTest, EncodeStart) {
 TEST_F(BytestreamTest, EncodeStop) {
   sc_bytestream_packet packet = sc_bytestream_put_stop(tmp);
 
-  fseek(tmp, 0, 0); // rewind tempfile
+  lseek(tmp, 0, 0); // rewind tempfile
   sc_bytestream_packet packet_read = deserialize_packet(tmp);
 
   EXPECT_EQ(packet.header.type, packet_read.header.type);
@@ -52,7 +52,7 @@ TEST_F(BytestreamTest, EncodeMouseData) {
 
   sc_bytestream_packet packet = sc_bytestream_put_mouse_data(tmp, coords);
 
-  fseek(tmp, 0, 0); // rewind tempfile
+  lseek(tmp, 0, 0); // rewind tempfile
   sc_mouse_coords decode_coords = sc_bytestream_get_mouse_data(tmp);
 
   EXPECT_EQ(coords.x, decode_coords.x);
@@ -68,19 +68,21 @@ TEST_F(BytestreamTest, EncodeFrameData) {
 
   sc_bytestream_packet packet = sc_bytestream_put_frame(tmp, frame);
 
-  fseek(tmp, 0, 0); // rewind tempfile
+  lseek(tmp, 0, 0); // rewind tempfile
   sc_frame decode_frame = sc_bytestream_get_frame(tmp);
   int reconstruct;
   memcpy(&reconstruct, decode_frame.framePtr, decode_frame.size);
 
   EXPECT_EQ(frameData, reconstruct);
   EXPECT_EQ(frameSize, decode_frame.size);
+
+  free(framePtr);
 };
 
 TEST_F(BytestreamTest, GetHeader) {
   sc_bytestream_packet packet = sc_bytestream_put_stop(tmp);
 
-  fseek(tmp, 0, 0); // rewind tempfile
+  lseek(tmp, 0, 0); // rewind tempfile
   sc_bytestream_header header = sc_bytestream_get_event_header(tmp);
 
   EXPECT_EQ(packet.header.type, header.type);
@@ -89,7 +91,7 @@ TEST_F(BytestreamTest, GetHeader) {
 TEST_F(BytestreamTest, GetRawPacket) {
   sc_bytestream_packet packet = sc_bytestream_put_start(tmp);
 
-  fseek(tmp, 0, 0); // rewind tempfile
+  lseek(tmp, 0, 0); // rewind tempfile
   sc_bytestream_packet decode_packet = sc_bytestream_get_event(tmp);
 
   EXPECT_EQ(packet.body.sz, decode_packet.body.sz);
@@ -114,7 +116,7 @@ TEST_F(BytestreamTest, MultiplePackets) {
   sc_bytestream_put_mouse_data(tmp, coords);
   sc_bytestream_put_stop(tmp);
 
-  fseek(tmp, 0, 0); // rewind tempfile
+  lseek(tmp, 0, 0); // rewind tempfile
 
   sc_bytestream_packet decode_packet = sc_bytestream_get_event(tmp);
   EXPECT_EQ(START, decode_packet.header.type);
@@ -127,4 +129,6 @@ TEST_F(BytestreamTest, MultiplePackets) {
 
   decode_packet = sc_bytestream_get_event(tmp);
   EXPECT_EQ(STOP, decode_packet.header.type);
+
+  free(framePtr);
 };

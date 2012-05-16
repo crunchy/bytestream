@@ -51,19 +51,19 @@ typedef struct {
   tpl_bin body;
 } sc_bytestream_packet;
 
-sc_bytestream_packet sc_bytestream_put_start(FILE *fd);
-sc_bytestream_packet sc_bytestream_put_stop(FILE *fd);
-sc_bytestream_packet sc_bytestream_put_mouse_data(FILE *fd, sc_mouse_coords coords);
-sc_bytestream_packet sc_bytestream_put_frame(FILE *fd, sc_frame frame);
+sc_bytestream_packet sc_bytestream_put_start(int fd);
+sc_bytestream_packet sc_bytestream_put_stop(int fd);
+sc_bytestream_packet sc_bytestream_put_mouse_data(int fd, sc_mouse_coords coords);
+sc_bytestream_packet sc_bytestream_put_frame(int fd, sc_frame frame);
 
-sc_mouse_coords sc_bytestream_get_mouse_data(FILE *fd);
-sc_frame sc_bytestream_get_frame(FILE *fd);
+sc_mouse_coords sc_bytestream_get_mouse_data(int fd);
+sc_frame sc_bytestream_get_frame(int fd);
 
-sc_bytestream_packet sc_bytestream_get_event(FILE *fd);
-sc_bytestream_header sc_bytestream_get_event_header(FILE *fd);
+sc_bytestream_packet sc_bytestream_get_event(int fd);
+sc_bytestream_header sc_bytestream_get_event_header(int fd);
 
 sc_bytestream_header create_header(uint8_t event);
-void serialize_packet(FILE *fd, sc_bytestream_packet packet);
-sc_bytestream_packet deserialize_packet(FILE *fd);
+void serialize_packet(int fd, sc_bytestream_packet packet);
+sc_bytestream_packet deserialize_packet(int fd);
 sc_frame parse_frame(sc_bytestream_packet packet);
 sc_mouse_coords parse_mouse_coords(sc_bytestream_packet packet);
