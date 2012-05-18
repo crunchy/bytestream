@@ -48,7 +48,7 @@ sc_mouse_coords sc_bytestream_get_mouse_data(int fd) {
 }
 
 sc_bytestream_packet sc_bytestream_put_frame(int fd, sc_frame frame) {
-  sc_bytestream_packet packet = {create_header(VIDEO), create_body(&frame, sizeof(frame))};
+  sc_bytestream_packet packet = {create_header(VIDEO), create_body(frame.framePtr, frame.size)};
   serialize_packet(fd, packet);
 
   return packet;
@@ -84,7 +84,7 @@ sc_mouse_coords parse_mouse_coords(sc_bytestream_packet packet) {
 sc_frame parse_frame(sc_bytestream_packet packet) {
   void *data = packet.body.addr;
 
-  sc_frame frame = *((sc_frame *) data);
+  sc_frame frame = {(uint8_t *) data, packet.body.sz};
   // free(data);
 
   return frame;
@@ -100,22 +100,24 @@ void serialize_packet(int fd, sc_bytestream_packet packet) {
 sc_bytestream_packet deserialize_packet(int fd) {
   sc_bytestream_packet packet;
   sc_bytestream_header header;
-  tpl_bin data;
+  tpl_bin data = {NULL, 0};
 
   tpl_node *tn = tpl_map(TPL_STRUCTURE, &header, &data);
   int loaded = tpl_load(tn, TPL_FD, fd);
 
   if( loaded == -1 ) {
     packet.header = create_header(NO_DATA);
-    packet.body = create_body(NULL, 0);
   } else {
     tpl_unpack(tn, 0);
     packet.header = header;
-    packet.body = data;
   }
 
+  packet.body = data;
+
   tpl_free(tn);
-  free(data.addr);
+  if(data.addr != NULL) {
+    free(data.addr);
+  }
 
   return packet;
 }

@@ -60,7 +60,7 @@ TEST_F(BytestreamTest, EncodeMouseData) {
 };
 
 TEST_F(BytestreamTest, EncodeFrameData) {
-  int frameData = 0x499602D2;
+  int frameData = 0x499602D2123456;
   uint8_t *framePtr = (uint8_t *) &frameData;
   int frameSize = sizeof(frameData);
 
@@ -76,7 +76,6 @@ TEST_F(BytestreamTest, EncodeFrameData) {
   EXPECT_EQ(frameData, reconstruct);
   EXPECT_EQ(frameSize, decode_frame.size);
 
-  free(framePtr);
 };
 
 TEST_F(BytestreamTest, GetHeader) {
@@ -130,5 +129,4 @@ TEST_F(BytestreamTest, MultiplePackets) {
   decode_packet = sc_bytestream_get_event(tmp);
   EXPECT_EQ(STOP, decode_packet.header.type);
 
-  free(framePtr);
 };

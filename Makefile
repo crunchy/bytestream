@@ -43,6 +43,10 @@ all : $(TESTS)
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
 
+install :
+	cp bytestream.c bytestream.h ../screen_streamer/lib/
+	cp bytestream.c bytestream.h ../screenshare/ScreenShareOSXClient/ScreenShareClient/
+
 # Builds gtest.a and gtest_main.a.
 
 # Usually you shouldn't tweak such internal variables, indicated by a
