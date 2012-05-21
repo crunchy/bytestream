@@ -63,11 +63,20 @@ sc_bytestream_header sc_bytestream_get_event_header(int fd)
 
 The following methods are also available, but are not usually needed outside of the library, as they are all used to build or decode the packets.
 
-```
+```C
 sc_bytestream_header create_header(uint8_t event);
+sc_bytestream_header create_header(uint8_t event, sc_time timestamp)
 void serialize_packet(int fd, sc_bytestream_packet packet);
 sc_bytestream_packet deserialize_packet(int fd);
 ```
+
+**Important**
+
+The `create_header` method gets the current unix time and converts it to milliseconds (`SC_TimeBase`) automatically. create_header_with_time does not convert the timestamp for you, it expects that you conver the time you are passing to it to milliseconds **before** you send it. This is so that if the date/time library you are using is already in milliseconds, we will not lose that precision.
+
+**Also Note**
+
+`sc_bytestream_put_frame` uses `create_header_with_time`. so please _convert your timestamps properly before using `_put_frame`._
 
 Testing
 =======
