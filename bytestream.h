@@ -22,8 +22,8 @@
 #define VIDEO 0x04
 #define NO_DATA 0xFF
 
-typedef uint64_t sc_time;
-static char TPL_STRUCTURE[] = "S(vU)B";
+typedef uint32_t sc_time;
+static char TPL_STRUCTURE[] = "S(vu)B";
 
 typedef struct {
     uint16_t x, y;
