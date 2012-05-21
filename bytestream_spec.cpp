@@ -19,7 +19,7 @@ class BytestreamTest : public ::testing::Test {
 // simple header creation helper
 TEST_F(BytestreamTest, CreateHeader) {
   sc_bytestream_header h = create_header(MOUSE);
-  sc_time timeNow = time(NULL);
+  sc_time timeNow = time(NULL) * SC_TimeBase;
 
   EXPECT_EQ(MOUSE, h.type);
   EXPECT_EQ(timeNow, h.timestamp);

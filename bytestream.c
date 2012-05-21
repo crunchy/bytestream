@@ -7,7 +7,7 @@
 #include "bytestream.h"
 
 sc_bytestream_header create_header(uint8_t type) {
-  sc_bytestream_header header = {(uint16_t)type, time(NULL)};
+  sc_bytestream_header header = {(uint16_t)type, (time(NULL) * SC_TimeBase)};
   return header;
 }
 
