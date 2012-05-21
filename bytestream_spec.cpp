@@ -60,13 +60,13 @@ TEST_F(BytestreamTest, EncodeMouseData) {
 };
 
 TEST_F(BytestreamTest, EncodeFrameData) {
-  int frameData = 0x499602D2123456;
+  int frameData = 0x499602D2;
   uint8_t *framePtr = (uint8_t *) &frameData;
   int frameSize = sizeof(frameData);
 
   sc_frame frame = {framePtr, frameSize};
 
-  sc_bytestream_packet packet = sc_bytestream_put_frame(tmp, frame);
+  sc_bytestream_packet packet = sc_bytestream_put_frame(tmp, frame, time(NULL));
 
   lseek(tmp, 0, 0); // rewind tempfile
   sc_frame decode_frame = sc_bytestream_get_frame(tmp);
@@ -111,7 +111,7 @@ TEST_F(BytestreamTest, MultiplePackets) {
   sc_mouse_coords coords = {440, 99};
 
   sc_bytestream_put_start(tmp);
-  sc_bytestream_put_frame(tmp, frame);
+  sc_bytestream_put_frame(tmp, frame, time(NULL));
   sc_bytestream_put_mouse_data(tmp, coords);
   sc_bytestream_put_stop(tmp);
 

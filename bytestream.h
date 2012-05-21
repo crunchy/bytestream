@@ -22,8 +22,8 @@
 #define VIDEO 0x04
 #define NO_DATA 0xFF
 
-typedef uint32_t sc_time;
-static char TPL_STRUCTURE[] = "S(vu)B";
+typedef uint64_t sc_time;
+static char TPL_STRUCTURE[] = "S(vU)B";
 
 typedef struct {
     uint16_t x, y;
@@ -54,7 +54,7 @@ typedef struct {
 sc_bytestream_packet sc_bytestream_put_start(int fd);
 sc_bytestream_packet sc_bytestream_put_stop(int fd);
 sc_bytestream_packet sc_bytestream_put_mouse_data(int fd, sc_mouse_coords coords);
-sc_bytestream_packet sc_bytestream_put_frame(int fd, sc_frame frame);
+sc_bytestream_packet sc_bytestream_put_frame(int fd, sc_frame frame, sc_time timestamp);
 
 sc_mouse_coords sc_bytestream_get_mouse_data(int fd);
 sc_frame sc_bytestream_get_frame(int fd);
@@ -62,7 +62,9 @@ sc_frame sc_bytestream_get_frame(int fd);
 sc_bytestream_packet sc_bytestream_get_event(int fd);
 sc_bytestream_header sc_bytestream_get_event_header(int fd);
 
-sc_bytestream_header create_header(uint8_t event);
+sc_bytestream_header create_header(uint8_t type);
+sc_bytestream_header create_header_with_time(uint8_t type, sc_time timestamp);
+
 void serialize_packet(int fd, sc_bytestream_packet packet);
 sc_bytestream_packet deserialize_packet(int fd);
 sc_frame parse_frame(sc_bytestream_packet packet);
