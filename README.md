@@ -76,7 +76,7 @@ The `create_header` method gets the current unix time and converts it to millise
 
 **Also Note**
 
-`sc_bytestream_put_frame` uses `create_header_with_time`. so please _convert your timestamps properly before using `_put_frame`._
+`sc_bytestream_put_frame` uses `create_header_with_time`. so please _convert your timestamps properly before using_ `_put_frame`.
 
 Testing
 =======
